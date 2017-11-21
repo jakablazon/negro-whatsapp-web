@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Konva stuff</title>
+    <script src="https://cdn.rawgit.com/konvajs/konva/1.7.6/konva.min.js"></script>
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+  </head>
+  <body>
+    <style>
+      #container{
+        border: 1px solid black;
+        width: 600px;
+        height: 400px;
+      }
+      body{
+        margin: 10;
+        padding: 0;
+        overflow: hidden;
+      }
+    </style>
+
+    <h3>Here be images</h3>
+    <p>Move Yoda around</p>
+
+    <div id="container"></div>
+
+    <a href="javascript:void(0);" onclick="saveImg()">Save image</a>
+    <a href="javascript:void(0);" id="magiclink" style="display:none;">Download image</a>
+
+
+    <script>
+      //container stuff
+      var width = 600;
+      var height = 400;
+
+     //container canvas
+      var stage = new Konva.Stage({
+        container: 'container',
+        width: width,
+        height: height
+      });
+
+      //main layer
+      var layer = new Konva.Layer();
+      stage.add(layer);
+
+      // main pic
+      var mainPic = new Konva.Image({
+        x: 0,
+        y: 0,
+        width: 600,
+        height: 400
+      });
+      layer.add(mainPic);
+
+      // yoda pic
+      var yodaPic = new Konva.Image({
+        x: 50,
+        y: 50,
+        width: 167,
+        height: 247,
+        draggable: true
+      });
+      layer.add(yodaPic);
+
+      // add img to layers
+      var imageObj1 = new Image();
+      imageObj1.onload = function() {
+          mainPic.image(imageObj1);
+          layer.draw();
+      };
+      imageObj1.src = '/main_pic.jpg';
+
+      var imageObj2 = new Image();
+      imageObj2.onload = function() {
+          yodaPic.image(imageObj2);
+          layer.draw();
+      };
+      imageObj2.src = '/yoda.png';
+
+    </script>
+
+    <script>
+      function dataURLtoBlob(dataurl) {
+        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+          bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while(n--){
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], {type:mime});
+      }
+
+      function saveImg(){
+        var canvas = $("#container canvas")[0];
+        // console.log('canvas', canvas);
+        var imgData = canvas.toDataURL('image/jpg');
+        // console.log('imgData', imgData);
+        var blob = dataURLtoBlob(imgData);
+        // console.log('blob', blob);
+
+        var link = document.getElementById('magiclink');
+        link.download = 'mock';
+        link.href = URL.createObjectURL(blob);
+        $("#magiclink")[0].click();
+      }
+    </script>
+  </body>
+</html>
